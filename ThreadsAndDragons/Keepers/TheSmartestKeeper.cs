@@ -6,11 +6,11 @@ using NUnit.Framework;
 
 namespace ThreadsAndDragons.Keepers
 {
-	class TheSmartestKeeper:IKeeper
+	class TheSmartestKeeper : IKeeper
 	{
 		public TheSmartestKeeper(string[] baseSentences)
 		{
-			sentences = baseSentences.Select(x =>new SmartWrapper(x)).ToList();
+			sentences = baseSentences.Select(x => new SmartWrapper(x)).ToList();
 		}
 
 		public Tuple<int, string> ReplaceFirst(string word, string replace)
@@ -21,12 +21,11 @@ namespace ThreadsAndDragons.Keepers
 			{
 				lock (sentences[i])
 				{
-					var wrappedString = sentences[i].WrappedString;
-					var res = rgx.Match(wrappedString);
+					var res = rgx.Match(sentences[i].WrappedString);
 					if (res.Success)
 					{
-						wrappedString = rgx.Replace(wrappedString, replace, 1);
-						return Tuple.Create(i, wrappedString);
+						sentences[i].WrappedString = rgx.Replace(sentences[i].WrappedString, replace, 1);
+						return Tuple.Create(i, sentences[i].WrappedString);
 					}
 				}
 			}

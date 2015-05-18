@@ -60,7 +60,7 @@ namespace ThreadsAndDragons.Tests
 			Console.WriteLine("testing parallel AND doing it smart");
 			parallelKeeper = new SafeKeeper(sentences.ToArray());
 			sw.Start();
-			var amountOfParts = 4;
+			var amountOfParts = Environment.ProcessorCount;
 			var parts = pairs.Split(amountOfParts);
 			sw.Stop();
 			Console.WriteLine("Setting up elapsed: {0} ms", sw.ElapsedMilliseconds);
