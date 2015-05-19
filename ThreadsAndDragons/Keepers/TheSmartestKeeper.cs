@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using NUnit.Framework;
 
 namespace ThreadsAndDragons.Keepers
 {
@@ -10,22 +9,23 @@ namespace ThreadsAndDragons.Keepers
 	{
 		public TheSmartestKeeper(string[] baseSentences)
 		{
-			sentences = baseSentences.Select(x => new SmartWrapper(x)).ToList();
+			sentences = baseSentences.Select(x => new SmartWrapper(x)).ToArray();
 		}
 
 		public Tuple<int, string> ReplaceFirst(string word, string replace)
 		{
 			var pattern = string.Format(@"\b{0}\b", word);
 			var rgx = new Regex(pattern);
-			for (int i = 0; i < sentences.Count; i++)
+			for (int i = 0; i < sentences.Length; i++)
 			{
-				lock (sentences[i])
+				var sentence = sentences[i];
+				lock (sentence)
 				{
-					var res = rgx.Match(sentences[i].WrappedString);
+					var res = rgx.Match(sentence.WrappedString);
 					if (res.Success)
 					{
-						sentences[i].WrappedString = rgx.Replace(sentences[i].WrappedString, replace, 1);
-						return Tuple.Create(i, sentences[i].WrappedString);
+						sentence.WrappedString = rgx.Replace(sentence.WrappedString, replace, 1);
+						return Tuple.Create(i, sentence.WrappedString);
 					}
 				}
 			}
@@ -37,17 +37,18 @@ namespace ThreadsAndDragons.Keepers
 			return sentences.Select(x => x.WrappedString).ToArray();
 		}
 
-		private List<SmartWrapper> sentences;
+		private SmartWrapper[] sentences;
 
-	}
-
-	public class SmartWrapper
-	{
-		public SmartWrapper(string sentence)
+		private class SmartWrapper
 		{
-			WrappedString = sentence;
+			public SmartWrapper(string sentence)
+			{
+				WrappedString = sentence;
+			}
+
+			public string WrappedString { get; set; }
 		}
 
-		public string WrappedString { get; set; }
 	}
+
 }

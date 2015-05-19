@@ -11,7 +11,7 @@ namespace ThreadsAndDragons.Tests
 		[SetUp]
 		public static void SetUp()
 		{
-			_keeper = new TheSmartestKeeper(sentences);
+			_keeper = new SmartKeeper(sentences);
 		}
 
 		[Test]
