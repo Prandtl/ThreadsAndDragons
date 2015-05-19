@@ -17,13 +17,14 @@ namespace ThreadsAndDragons.Keepers
 			var rgx = new Regex(pattern);
 			for (int i = 0; i < sentences.Count; i++)
 			{
-				lock (sentences[i])
+				var sentence = sentences[i];
+				lock (sentence)
 				{
-					var res = rgx.Match(sentences[i]);
+					var res = rgx.Match(sentence);
 					if (res.Success)
 					{
-						sentences[i] = rgx.Replace(sentences[i], replace, 1);
-						return Tuple.Create(i, sentences[i]);
+						sentences[i] = rgx.Replace(sentence, replace, 1);
+						return Tuple.Create(i, sentence);
 					}
 				}
 			}

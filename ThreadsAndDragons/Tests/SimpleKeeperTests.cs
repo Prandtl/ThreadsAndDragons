@@ -58,7 +58,8 @@ namespace ThreadsAndDragons.Tests
 				});
 				firstThread.Start();
 				secondThread.Start();
-				Thread.Sleep(500);
+				firstThread.Join();
+				secondThread.Join();
 				var expected = res.Item2 == "Roses are red. Violets are blue. I ,Jason, hate you."
 					? "Roses are red. Violets are blue. I ,John, hate you."
 					: "Roses are red. Violets are blue. I ,Jason, hate you.";
