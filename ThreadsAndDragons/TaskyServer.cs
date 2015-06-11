@@ -2,31 +2,43 @@
 using System.Net;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using ThreadsAndDragons.Keepers;
 
 namespace ThreadsAndDragons
 {
-	class Server
+	class TaskyServer
 	{
-		public Server(int port, string[] sentences)
+		public TaskyServer(int port, string[] sentences)
 		{
+			ThreadPool.SetMinThreads(8, 8);
 			listener = new HttpListener();
 			listener.Prefixes.Add(string.Format("http://+:{0}/", port));
 
-			keeper=new Keeper(sentences);
+			keeper = new SafeKeeper(sentences);
 		}
 
 		public void Start()
 		{
-			Console.WriteLine("Simple listeneing.");
+			Console.WriteLine("Tasky listening.");
 			listener.Start();
 			while (true)
 			{
 				try
 				{
 					var context = listener.GetContext();
-					ReplaceResponse(context);
-					context.Response.Close();
+					try
+					{
+						ReplaceResponse(context);
+					}
+					catch (Exception e)
+					{
+						Console.WriteLine(e.Message);
+					}
+					finally
+					{
+						context.Response.Close();
+					}
 				}
 				catch (Exception e)
 				{
@@ -37,7 +49,9 @@ namespace ThreadsAndDragons
 
 		public Tuple<int, string> ReplaceFirst(string word, string replace)
 		{
-			return keeper.ReplaceFirst(word, replace);
+
+			var replaceTask = Task.Factory.StartNew(() => keeper.ReplaceFirst(word, replace));
+			return replaceTask.Result;
 		}
 
 		public void ReplaceResponse(HttpListenerContext context)
@@ -62,6 +76,6 @@ namespace ThreadsAndDragons
 
 		private HttpListener listener;
 
-		private Keeper keeper;
+		private SafeKeeper keeper;
 	}
 }

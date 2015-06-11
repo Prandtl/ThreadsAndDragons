@@ -49,13 +49,14 @@
     <Compile Include="Keepers\SmartKeeper.cs" />
     <Compile Include="Keepers\TheSmartestKeeper.cs" />
     <Compile Include="LinqExtensions.cs" />
-    <Compile Include="ParallelServer.cs" />
+    <Compile Include="TaskyServer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Keepers\SafeKeeper.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Tests\SimpleKeeperTests.cs" />
     <Compile Include="Tests\SpeedTest.cs" />
+    <Compile Include="ThreadyServer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
